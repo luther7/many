@@ -11,51 +11,104 @@ var (
 		"verp",
 		"Microservice versioning tool.",
 	)
-	versionFile = app.Flag(
+	repo = app.Flag(
+		"repo",
+		"Path to the Git repository containing the version file.",
+	).Short('r').Default(".").File()
+	verpFile = app.Flag(
 		"file",
-		"File containing version info.",
-	).Short('f').Default("./Versionfile").String()
+		"Path to the file containing the version information.",
+	).Short('f').Default("./verp.toml").String()
 
-	register = app.Command(
-		"register",
-		"Register a microservice.",
+	initialise = app.Command(
+		"init",
+		"Initialize a new Verp Git repository with an empty versioning file. "+
+			"If a repository exists at the provided URL then it is cloned.",
 	)
-	registerName = register.Arg(
+	initialiseUpdate = initialise.Flag(
+		"update",
+		"Update Verp Git repository details if it is already initialised.",
+	).Short('u').Default("false").Bool()
+	initialiseName = initialise.Arg(
 		"name",
+		"Name of the Verp Git repository.",
+	).Required().String()
+	initialiseRemoteUrl = initialise.Arg(
+		"git-url",
+		"URL of the Git remote.",
+	).URL()
+	initialiseRemoteName = initialise.Flag(
+		"remote",
+		"Name of the Git remote.",
+	).Short('m').Default("origin").String()
+	initialiseVersion = initialise.Flag(
+		"inital-version",
+		"The starting version.",
+	).Short('i').Default("0.0.0").String()
+	initialiseNoClone = initialise.Flag(
+		"no-clone",
+		"Do not clone the from an existing repository at the remote URL.",
+	).Short('n').Default("false").Bool()
+
+	pull = app.Command(
+		"pull",
+		"Pull changes from the remote Verp Git repository.",
+	)
+
+	push = app.Command(
+		"push",
+		"Push changes to the remote Verp Git repository.",
+	)
+
+	create = app.Command(
+		"create",
+		"Register a new microservice with Verp.",
+	)
+	createUpdate = create.Flag(
+		"update",
+		"Update microservice details if it already exists.",
+	).Short('u').Default("false").Bool()
+	createName = create.Arg(
+		"service",
 		"Name of microservice.",
 	).Required().String()
-	registerDescription = register.Flag(
+	createDescription = create.Flag(
 		"description",
 		"Description of microservice.",
-	).Short('d').String()
-	registerGit = register.Flag(
+	).Short('s').String()
+	createGit = create.Flag(
 		"git",
 		"URL of the Git repository for the microservice.",
 	).Short('g').URL()
-	registerDocker = register.Flag(
+	createDocker = create.Flag(
 		"docker",
 		"URL of the Docker repository for the microservice.",
-	).Short('r').URL()
-	registerUpdate = register.Flag(
-		"update",
-		"Update microservice details if it is already registered.",
-	).Short('u').Default("false").Bool()
+	).Short('c').URL()
+
+	view = app.Command(
+		"view",
+		"View details for microservices.",
+	)
+	viewName = view.Arg(
+		"services",
+		"CSV list of microservices.",
+	).Required().String()
 
 	delete = app.Command(
 		"delete",
 		"Delete a microservice.",
 	)
 	deleteName = delete.Arg(
-		"name",
+		"service",
 		"Name of microservice.",
 	).Required().String()
 
 	promote = app.Command(
 		"promote",
-		"Promote a candidate version.",
+		"Promote a candidate version of a microservice.",
 	)
 	promoteName = promote.Arg(
-		"name",
+		"service",
 		"Name of microservice.",
 	).Required().String()
 	promoteVersion = promote.Arg(
@@ -63,13 +116,18 @@ var (
 		"Candidate version.",
 	).Required().String()
 
-	increment = app.Command(
-		"increment",
-		"Increment the overall version.",
+	current = app.Command(
+		"current",
+		"View the current overall version.",
 	)
-	incrementCategory = increment.Arg(
-		"category",
-		"Category to increment.",
+
+	release = app.Command(
+		"release",
+		"Create a new overall version from the candidates.",
+	)
+	releaseCategory = release.Arg(
+		"version",
+		"Version to increment for this release.",
 	).Required().Enum("patch", "minor", "major")
 )
 
@@ -78,39 +136,30 @@ func main() {
 	app.Version(version)
 	app.VersionFlag.Short('v')
 	command := kingpin.MustParse(app.Parse(os.Args[1:]))
-	println(*versionFile)
 
 	switch command {
+	case "init":
+		// TODO
+
+	case "pull":
+		// TODO
+
+	case "push":
+		// TODO
+
 	case "register":
-		println(*registerName)
-		if *registerDescription != "" {
-			println(*registerDescription)
-		}
-		if *registerGit != nil {
-			println((*registerGit).String())
-		}
-		if *registerDocker != nil {
-			println((*registerDocker).String())
-		}
-		if *registerUpdate {
-			println("update")
-		}
+		// TODO
+
+	case "view":
 		// TODO
 
 	case "delete":
-		println(*versionFile)
-		println(*deleteName)
 		// TODO
 
 	case "promote":
-		println(*versionFile)
-		println(*promoteName)
-		println(*promoteVersion)
 		// TODO
 
 	case "increment":
-		println(*versionFile)
-		println(*incrementCategory)
 		// TODO
 	}
 }
