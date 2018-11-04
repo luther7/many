@@ -8,30 +8,30 @@ import (
 var (
 	version = "0.1.0"
 	app     = kingpin.New(
-		"verp",
+		"many",
 		"Microservice versioning tool.",
 	)
 	repo = app.Flag(
 		"repo",
 		"Path to the Git repository containing the version file.",
 	).Short('r').Default(".").File()
-	verpFile = app.Flag(
+	manyFile = app.Flag(
 		"file",
 		"Path to the file containing the version information.",
-	).Short('f').Default("./verp.toml").String()
+	).Short('f').Default("./many.toml").String()
 
 	initialise = app.Command(
 		"init",
-		"Initialize a new Verp Git repository with an empty versioning file. "+
+		"Initialize a new Many Git repository with an empty versioning file. "+
 			"If a repository exists at the provided URL then it is cloned.",
 	)
 	initialiseUpdate = initialise.Flag(
 		"update",
-		"Update Verp Git repository details if it is already initialised.",
+		"Update Many Git repository details if it is already initialised.",
 	).Short('u').Default("false").Bool()
 	initialiseName = initialise.Arg(
 		"name",
-		"Name of the Verp Git repository.",
+		"Name of the Many Git repository.",
 	).Required().String()
 	initialiseRemoteUrl = initialise.Arg(
 		"git-url",
@@ -52,17 +52,17 @@ var (
 
 	pull = app.Command(
 		"pull",
-		"Pull changes from the remote Verp Git repository.",
+		"Pull changes from the remote Many Git repository.",
 	)
 
 	push = app.Command(
 		"push",
-		"Push changes to the remote Verp Git repository.",
+		"Push changes to the remote Many Git repository.",
 	)
 
 	create = app.Command(
 		"create",
-		"Register a new microservice with Verp.",
+		"Register a new microservice with Many.",
 	)
 	createUpdate = create.Flag(
 		"update",
