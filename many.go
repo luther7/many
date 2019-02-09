@@ -14,10 +14,10 @@ import (
 
 // A version of a service.
 type Version struct {
-	name        string
-	description string
-	date        time.Time
-	author      string
+	Name        string
+	Description string
+	Date        time.Time
+	Author      string
 }
 
 // A collection of versions.
@@ -25,12 +25,12 @@ type Versions []Version
 
 // A service.
 type Service struct {
-	name        string
-	description string
-	git         string
-	docker      string
-	candidate   Version
-	versions    Versions
+	Name        string
+	Description string
+	Git         string
+	Docker      string
+	Candidate   Version
+	Versions    Versions
 }
 
 // A table of services. The key is the service's name.
@@ -38,18 +38,18 @@ type Services map[string]Service
 
 // The Manyfile is the TOML config containing the versioning information.
 type Manyfile struct {
-	name       string
-	remoteURL  string `toml:"remote_url"`
-	remoteName string `toml:"remote_name"`
-	versions   Versions
-	services   Services
+	Name       string
+	RemoteURL  string `toml:"remote_url"`
+	RemoteName string `toml:"remote_name"`
+	Versions   Versions
+	Services   Services
 }
 
 // A Many repository.
 type Repo struct {
-	path     string
-	file     string
-	manyFile Manyfile
+	Path     string
+	File     string
+	ManyFile Manyfile
 }
 
 // Part of the sort interface.
@@ -64,14 +64,14 @@ func (vs Versions) Swap(i, j int) {
 
 // Part of the sort interface.
 func (vs Versions) Less(i, j int) bool {
-	return vs[i].name < vs[j].name
+	return vs[i].Name < vs[j].Name
 }
 
 // Add a version to a collection of versions.
 func (vs Versions) Add(v Version) {
 	// Sort the versions and search for the version to be added.
 	sort.Sort(vs)
-	i := sort.Search(len(vs), func(i int) bool { return vs[i].name >= v.name })
+	i := sort.Search(len(vs), func(i int) bool { return vs[i].Name >= v.Name })
 	// The version already exists in the collection.
 	if i < len(vs) && vs[i] == v {
 		// Override the version.
@@ -87,24 +87,24 @@ func (vs Versions) Add(v Version) {
 
 // Merge services.
 func (s1 *Service) Merge(s2 Service) error {
-	if s2.name != "" {
-		s1.name = s2.name
+	if s2.Name != "" {
+		s1.Name = s2.Name
 	}
-	if s2.description != "" {
-		s1.description = s2.description
+	if s2.Description != "" {
+		s1.Description = s2.Description
 	}
-	if s2.git != "" {
-		s1.git = s2.git
+	if s2.Git != "" {
+		s1.Git = s2.Git
 	}
-	if s2.docker != "" {
-		s1.docker = s2.docker
+	if s2.Docker != "" {
+		s1.Docker = s2.Docker
 	}
-	if s2.candidate != (Version{}) {
-		s1.candidate = s2.candidate
+	if s2.Candidate != (Version{}) {
+		s1.Candidate = s2.Candidate
 	}
-	if s2.versions != nil {
-		for _, v := range s2.versions {
-			s1.versions.Add(v)
+	if s2.Versions != nil {
+		for _, v := range s2.Versions {
+			s1.Versions.Add(v)
 		}
 	}
 	return nil
@@ -112,23 +112,23 @@ func (s1 *Service) Merge(s2 Service) error {
 
 // Merge Manyfiles.
 func (f1 *Manyfile) Merge(f2 Manyfile) error {
-	if f2.name != "" {
-		f1.name = f2.name
+	if f2.Name != "" {
+		f1.Name = f2.Name
 	}
-	if f2.remoteURL != "" {
-		f1.remoteURL = f2.remoteURL
+	if f2.RemoteURL != "" {
+		f1.RemoteURL = f2.RemoteURL
 	}
-	if f2.remoteName != "" {
-		f1.remoteName = f2.remoteName
+	if f2.RemoteName != "" {
+		f1.RemoteName = f2.RemoteName
 	}
-	if f2.versions != nil {
-		for _, f := range f2.versions {
-			f1.versions.Add(f)
+	if f2.Versions != nil {
+		for _, f := range f2.Versions {
+			f1.Versions.Add(f)
 		}
 	}
-	if f2.services != nil {
-		for n, s2 := range f2.services {
-			s1, ok := f1.services[n]
+	if f2.Services != nil {
+		for n, s2 := range f2.Services {
+			s1, ok := f1.Services[n]
 			if ok {
 				s1.Merge(s2)
 			}
@@ -140,33 +140,33 @@ func (f1 *Manyfile) Merge(f2 Manyfile) error {
 // Save the repo.
 func (r *Repo) Save() error {
 	// Check if the repo dir exists.
-	_, err := os.Stat(r.path)
+	_, err := os.Stat(r.Path)
 	if err != nil {
 		// The repo dir exists and there was an error.
 		if !os.IsNotExist(err) {
 			return err
 		}
 		// Repo dir doesn't exist. Make the repo dir.
-		err = os.MkdirAll(r.path, 700)
+		err = os.MkdirAll(r.Path, 700)
 		if err != nil {
 			return err
 		}
 	}
 	// Check if the Manyfile exists.
-	_, err = os.Stat(r.file)
+	_, err = os.Stat(r.File)
 	// The Manyfile exists and there was an error.
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
 	// Create the Manyfile. If it already exists it will be truncated.
-	f, err := os.Create(r.file)
+	f, err := os.Create(r.File)
 	defer f.Close()
 	if err != nil {
 		return err
 	}
 	// Write the Manyfile.
 	e := toml.NewEncoder(f)
-	err = e.Encode(r.manyFile)
+	err = e.Encode(r.ManyFile)
 	if err != nil {
 		return err
 	}
@@ -197,9 +197,9 @@ func LoadRepo(repo string, file string) (*Repo, error) {
 	}
 	// Return a new repo struct.
 	return &Repo{
-		path:     repo,
-		file:     file,
-		manyFile: *m,
+		Path:     repo,
+		File:     file,
+		ManyFile: *m,
 	}, nil
 }
 
@@ -222,6 +222,17 @@ func InitRepo(
 		}
 		// TODO clone.
 		// Repo does not exist. Create it.
+		r = &Repo{
+			Path:     repo,
+			File:     file,
+			ManyFile: Manyfile{
+				Name:       name,
+				RemoteURL:  remoteURL,
+				RemoteName: remoteName,
+				Versions:   Versions{},
+				Services:   Services{},
+			},
+		}
 		err = r.Save()
 		if err != nil {
 			return err
@@ -233,11 +244,11 @@ func InitRepo(
 		return errors.New("Repository already exists. Use --update to update it.")
 	}
 	// Update the repo. Merge in the new repo details.
-	err = r.manyFile.Merge(
+	err = r.ManyFile.Merge(
 		Manyfile{
-			name:       name,
-			remoteURL:  remoteURL,
-			remoteName: remoteName,
+			Name:       name,
+			RemoteURL:  remoteURL,
+			RemoteName: remoteName,
 		},
 	)
 	if err != nil {
@@ -293,78 +304,78 @@ func main() {
 			"no-clone",
 			"Do not clone the from an existing repository at the remote URL.",
 		).Short('n').Default("false").Bool()
-		argPull = a.Command(
-			"pull",
-			"Pull changes from the remote Many repository.",
-		)
-		argPush = a.Command(
-			"push",
-			"Push changes to the remote Many Grepository.",
-		)
-		argCreate = a.Command(
-			"create",
-			"Register a new microservice with Many.",
-		)
-		argCreateUpdate = argCreate.Flag(
-			"update",
-			"Update microservice details if it already exists.",
-		).Short('u').Default("false").Bool()
-		argCreateName = argCreate.Arg(
-			"service",
-			"Name of microservice.",
-		).Required().String()
-		argCreateDescription = argCreate.Flag(
-			"description",
-			"Description of microservice.",
-		).Short('s').String()
-		argCreateGit = argCreate.Flag(
-			"git",
-			"URL of the Git repository for the microservice.",
-		).Short('g').String()
-		argCreateDocker = argCreate.Flag(
-			"docker",
-			"URL of the Docker repository for the microservice.",
-		).Short('c').URL()
-		argView = a.Command(
-			"view",
-			"View details for microservices.",
-		)
-		argViewName = argView.Arg(
-			"services",
-			"CSV list of microservices.",
-		).Required().String()
-		argDelete = a.Command(
-			"delete",
-			"Delete a microservice.",
-		)
-		argDeleteName = argDelete.Arg(
-			"service",
-			"Name of microservice.",
-		).Required().String()
-		argPromote = a.Command(
-			"promote",
-			"Promote a candidate version of a microservice.",
-		)
-		argPromoteName = argPromote.Arg(
-			"service",
-			"Name of microservice.",
-		).Required().String()
-		argPromoteVersion = argPromote.Arg(
-			"version",
-			"Candidate version.",
-		).Required().String()
-		argCurrent = a.Command(
-			"current",
-			"View the current overall version.",
-		)
-		argRelease = a.Command(
-			"release",
-			"Create a new overall version from the candidates.",
-		)
-		argReleaseCategory = argRelease.Arg(
-			"version",
-			"Version to increment for this release.",
-		).Required().Enum("patch", "minor", "major")
+		// argPull = a.Command(
+		// 	"pull",
+		// 	"Pull changes from the remote Many repository.",
+		// )
+		// argPush = a.Command(
+		// 	"push",
+		// 	"Push changes to the remote Many Grepository.",
+		// )
+		// argCreate = a.Command(
+		// 	"create",
+		// 	"Register a new microservice with Many.",
+		// )
+		// argCreateUpdate = argCreate.Flag(
+		// 	"update",
+		// 	"Update microservice details if it already exists.",
+		// ).Short('u').Default("false").Bool()
+		// argCreateName = argCreate.Arg(
+		// 	"service",
+		// 	"Name of microservice.",
+		// ).Required().String()
+		// argCreateDescription = argCreate.Flag(
+		// 	"description",
+		// 	"Description of microservice.",
+		// ).Short('s').String()
+		// argCreateGit = argCreate.Flag(
+		// 	"git",
+		// 	"URL of the Git repository for the microservice.",
+		// ).Short('g').String()
+		// argCreateDocker = argCreate.Flag(
+		// 	"docker",
+		// 	"URL of the Docker repository for the microservice.",
+		// ).Short('c').URL()
+		// argView = a.Command(
+		// 	"view",
+		// 	"View details for microservices.",
+		// )
+		// argViewName = argView.Arg(
+		// 	"services",
+		// 	"CSV list of microservices.",
+		// ).Required().String()
+		// argDelete = a.Command(
+		// 	"delete",
+		// 	"Delete a microservice.",
+		// )
+		// argDeleteName = argDelete.Arg(
+		// 	"service",
+		// 	"Name of microservice.",
+		// ).Required().String()
+		// argPromote = a.Command(
+		// 	"promote",
+		// 	"Promote a candidate version of a microservice.",
+		// )
+		// argPromoteName = argPromote.Arg(
+		// 	"service",
+		// 	"Name of microservice.",
+		// ).Required().String()
+		// argPromoteVersion = argPromote.Arg(
+		// 	"version",
+		// 	"Candidate version.",
+		// ).Required().String()
+		// argCurrent = a.Command(
+		// 	"current",
+		// 	"View the current overall version.",
+		// )
+		// argRelease = a.Command(
+		// 	"release",
+		// 	"Create a new overall version from the candidates.",
+		// )
+		// argReleaseCategory = argRelease.Arg(
+		// 	"version",
+		// 	"Version to increment for this release.",
+		// ).Required().Enum("patch", "minor", "major")
 	)
 	// Kingpin.
 	a.HelpFlag.Short('h')
@@ -372,19 +383,19 @@ func main() {
 	a.VersionFlag.Short('v')
 	c := kingpin.MustParse(a.Parse(os.Args[1:]))
 	// Loggers. No prefix. No timestamps.
-	lstd := log.New(os.Stout, "", 0)
-	lerr := log.New(os.Sterr, "", 0)
+	lstdout := log.New(os.Stdout, "", 0)
+	lstderr := log.New(os.Stderr, "", 0)
 	// Switch on command.
 	switch c {
 	case "init":
 		err := InitRepo(
-			argRepo,
-			argFile,
-			argInitName,
-			argInitRemoteURL,
-			argInitRemoteName,
-			argInitUpdate,
-			argInitNoClone,
+			*argRepo,
+			*argFile,
+			*argInitName,
+			*argInitRemoteURL,
+			*argInitRemoteName,
+			*argInitUpdate,
+			*argInitNoClone,
 		)
 		if err != nil {
 			lstderr.Fatal(err)
