@@ -269,7 +269,7 @@ func main() {
 		// Kingpin vars.
 		a = kingpin.New(
 			"many",
-			"Service versioning tool.",
+			"Versioning tool.",
 		)
 		argRepo = a.Flag(
 			"repo",
@@ -314,51 +314,51 @@ func main() {
 		// )
 		// argCreate = a.Command(
 		// 	"create",
-		// 	"Register a new microservice with Many.",
+		// 	"Register a new service with Many.",
 		// )
 		// argCreateUpdate = argCreate.Flag(
 		// 	"update",
-		// 	"Update microservice details if it already exists.",
+		// 	"Update service details if it already exists.",
 		// ).Short('u').Default("false").Bool()
 		// argCreateName = argCreate.Arg(
 		// 	"service",
-		// 	"Name of microservice.",
+		// 	"Name of service.",
 		// ).Required().String()
 		// argCreateDescription = argCreate.Flag(
 		// 	"description",
-		// 	"Description of microservice.",
+		// 	"Description of service.",
 		// ).Short('s').String()
 		// argCreateGit = argCreate.Flag(
 		// 	"git",
-		// 	"URL of the Git repository for the microservice.",
+		// 	"URL of the Git repository for the service.",
 		// ).Short('g').String()
 		// argCreateDocker = argCreate.Flag(
 		// 	"docker",
-		// 	"URL of the Docker repository for the microservice.",
+		// 	"URL of the Docker repository for the service.",
 		// ).Short('c').URL()
 		// argView = a.Command(
 		// 	"view",
-		// 	"View details for microservices.",
+		// 	"View details for services.",
 		// )
 		// argViewName = argView.Arg(
 		// 	"services",
-		// 	"CSV list of microservices.",
+		// 	"CSV list of services.",
 		// ).Required().String()
 		// argDelete = a.Command(
 		// 	"delete",
-		// 	"Delete a microservice.",
+		// 	"Delete a service.",
 		// )
 		// argDeleteName = argDelete.Arg(
 		// 	"service",
-		// 	"Name of microservice.",
+		// 	"Name of service.",
 		// ).Required().String()
 		// argPromote = a.Command(
 		// 	"promote",
-		// 	"Promote a candidate version of a microservice.",
+		// 	"Promote a candidate version of a service.",
 		// )
 		// argPromoteName = argPromote.Arg(
 		// 	"service",
-		// 	"Name of microservice.",
+		// 	"Name of service.",
 		// ).Required().String()
 		// argPromoteVersion = argPromote.Arg(
 		// 	"version",
