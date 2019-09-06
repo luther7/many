@@ -3,16 +3,14 @@
 
 [![Build Status](https://travis-ci.org/rubberydub/many.svg?branch=master)](https://travis-ci.org/rubberydub/many)
 
-**WIP**
-
 # To Do
 
-- [] Idea in read me
-- [] Test harness
-- [] Basic working git-backed example
-- [] Docker
-- [] Read me
-- [] 80% test coverage
+- [X] Idea in read me
+- [ ] Test harness
+- [ ] Basic working git-backed example
+- [ ] Docker
+- [ ] Read me
+- [ ] 80% test coverage
 
 # Introduction
 
