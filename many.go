@@ -38,11 +38,11 @@ type Services map[string]Service
 
 // The Manyfile is the TOML config containing the versioning information.
 type Manyfile struct {
-	Name       string
-	RemoteURL  string `toml:"remote_url"`
-	RemoteName string `toml:"remote_name"`
-	Versions   Versions
-	Services   Services
+	Name       string   `toml:"name"`
+	RemoteURL  string   `toml:"remote_url"`
+	RemoteName string   `toml:"remote_name"`
+	Versions   Versions `toml:"versions"`
+	Services   Services `toml:"services"`
 }
 
 // A Many repository.
